@@ -1,20 +1,36 @@
 <script setup>
-defineProps({
-  msg: {
-    type: String,
-    required: true
+import { reactive, onMounted } from 'vue';
+import { getUser } from '@/services/user';
+
+// Define reactive state
+const state = reactive({
+  userData: null,
+  error: null,
+});
+
+// Function to fetch user data
+const getUserNe = async () => {
+  try {
+    const response = await getUser(); // Replace with your API endpoint
+    console.log(response)
+    state.userData = response.data[0]; // Assuming your response has a data property
+  } catch (error) {
+    state.error = error.message;
   }
-})
+};
+
+// Fetch user data when component is mounted
+onMounted(getUserNe);
 </script>
 
 <template>
   <div class="greetings">
     <h1 class="green">{{ msg }}</h1>
-    <h3>
-      You’ve successfully created a project with
-      <a href="https://vitejs.dev/" target="_blank" rel="noopener">Vite</a> +
-      <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
-    </h3>
+    <div v-if="state.userData">
+      <p>User Name: {{ state.userData.name }}</p> <!-- Adjust this based on your API response structure -->
+      <p>Email: {{ state.userData.email }}</p> <!-- Adjust this based on your API response structure -->
+    </div>
+    <p v-if="state.error" class="error-message">{{ state.error }}</p>
   </div>
 </template>
 
@@ -40,5 +56,9 @@ h3 {
   .greetings h3 {
     text-align: left;
   }
+}
+
+.error-message {
+  color: red;
 }
 </style>
