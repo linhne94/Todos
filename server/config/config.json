@@ -2,7 +2,7 @@
   "development": {
     "username": "user1",
     "password": "passworduser1",
-    "database": "todo-list-vue-node-sequelize",
+    "database": "todo-list-node-sequelize-vue",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
