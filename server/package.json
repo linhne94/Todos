@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon backend/index.js"
+    "start": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +17,7 @@
     "express": "^4.19.2",
     "mysql2": "^3.10.2",
     "nodemailer": "^6.9.14",
+    "nodemon": "^3.1.4",
     "redis": "^4.6.15",
     "sequelize": "^6.37.3",
     "vimeo": "^2.3.1"
