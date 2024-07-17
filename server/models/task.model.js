@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     taskStatusId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: {
         model: 'task_status',
         key: 'id'
@@ -44,12 +44,16 @@ module.exports = (sequelize, DataTypes) => {
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+      defaultValue: DataTypes.NOW
     },
     updatedAt: {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
+      defaultValue: DataTypes.NOW
+    },
+    dueDate: {
+      type: DataTypes.DATE,
+      allowNull: false,
     }
   }, {
     sequelize,
