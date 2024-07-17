@@ -1,7 +1,7 @@
 ### init local db
 
 1. Kết nối đến MySQL bằng tài khoản root hoặc tài khoản có đủ quyền:
-   ex: mysql -u root -p
+   mysql -u root -p;
 
 2. Tạo cơ sở dữ liệu:
    CREATE DATABASE `todo-list-node-sequelize-vue`;
@@ -12,8 +12,16 @@
 4. Tạo người dùng mới và cấp quyền cho người dùng này:
 
 - CREATE USER 'user1'@'%' IDENTIFIED BY 'passworduser1';
-- GRANT ALL PRIVILEGES ON `todo-list-node-sequelize-vue`.\* TO 'user1'@'%';
+- GRANT ALL PRIVILEGES ON `todo-list-node-sequelize-vue`.* TO 'user1'@'%';
 - FLUSH PRIVILEGES;
+
+5. Thoát mysql
+- exit 
+
+### update local database/ cập nhật local database nếu có thay đổi trong file migration
+
+1.  Chạy migration
+    - npx sequelize-cli db:migrate
 
 ### modify table // thêm xóa thuộc tính hay sử bảng trên table
 
@@ -35,3 +43,9 @@
 
 3.  Chạy migration
     - npx sequelize-cli db:migrate
+
+
+
+### Để ý có thể bug khi chạy mấy lệnh trên ở terminal
+    - lệnh npx thường file chạy tới folder server mới dùng được.
+    - lệnh mysql thường phải có ; ở cuối.
