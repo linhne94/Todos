@@ -2,7 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.addColumn('Users', 'role', {
+    await queryInterface.addColumn('user', 'role', {
       type: Sequelize.STRING,
       allowNull: true, // hoặc false nếu bạn muốn bắt buộc
       default: 'user'
@@ -10,6 +10,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.removeColumn('Users', 'role');
+    await queryInterface.removeColumn('user', 'role');
   }
 };

@@ -3,13 +3,9 @@
   import VueDatePicker from '@vuepic/vue-datepicker';
   import '@vuepic/vue-datepicker/dist/main.css';
   import { defineProps } from 'vue';
-
+  import { getCategories } from '../services/categories';
   const props = defineProps({
     tasks: {
-      type: Array,
-      required: true,
-    },
-    categories: {
       type: Array,
       required: true,
     },
@@ -67,6 +63,20 @@
       opened.value = false;
     }
   };
+
+  const categories = ref([]);
+  onMounted(async () => {
+    try {
+      const res = await getCategories();
+      console.log(res.data.body);
+      categories.value = res.data.body;
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      // Handle error if needed
+    }
+    document.addEventListener('click', outsideClickHandler);
+  });
+  console.log(categories);
 </script>
 <template>
   <section>
@@ -118,6 +128,7 @@
                   />
                 </svg>
               </button>
+
               <div
                 role="menu"
                 aria-orientation="vertical"
@@ -128,27 +139,19 @@
                 ref="dropdownMenu"
                 @keydown.escape="closeDropdown"
               >
-                <ul
-                  class="text-sm"
-                  role="none"
-                  v-for="(category, index) in categories"
-                  :key="index"
-                >
-                  <li>
+                <ul class="text-sm" role="none">
+                  <li class="hover:font-semibold" v-for="(category, index) in categories" :key="index">
                     <a
                       href="#"
-                      :class="[
-                        'block',
-                        'px-4',
-                        'py-2',
-                        'hover:bg-gray-50',
-                        index === 0 ? 'rounded-t-2xl' : '',
-                        index === categories.length - 1 ? 'rounded-b-2xl' : '',
-                        'capitalize',
-                      ]"
-                      @click="selectCategory(category)"
-                      >{{ category }}</a
+                      class="block px-4 py-2 hover:bg-gray-50 capitalize"
+                      :class="{
+                        'rounded-t-2xl': index === 0,
+                        'rounded-b-2xl': index === categories.length - 1,
+                      }"
+                      @click="selectCategory(category.name)"
                     >
+                      {{ category.name }}
+                    </a>
                   </li>
                 </ul>
               </div>
