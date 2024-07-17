@@ -10,13 +10,17 @@
       required: true,
     },
   });
+  const handleSelectedDayUpdate = (day) => {
+    console.log('Selected day updated:', day);
+    // Perform any logic here based on the selected day if needed
+  };
 </script>
 
 <template>
   <section class="pt-0">
     <div class="container">
       <div class="bg-white rounded-2xl p-10 grid grid-cols-10 gap-10 custom-shadow">
-        <DaySection class="col-span-3" />
+        <DaySection @update:selectedDay="handleSelectedDayUpdate" class="col-span-3" />
         <TaskItem :tasks="tasks" class="col-span-7" />
       </div>
     </div>

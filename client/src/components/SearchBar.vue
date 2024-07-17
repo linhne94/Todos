@@ -3,7 +3,7 @@
   import VueDatePicker from '@vuepic/vue-datepicker';
   import '@vuepic/vue-datepicker/dist/main.css';
   import { defineProps } from 'vue';
-
+  import { getCategories } from '../services/categories';
   const props = defineProps({
     tasks: {
       type: Array,
@@ -51,6 +51,7 @@
     currentCategory.value = category;
     opened.value = false;
   };
+
   onMounted(() => {
     document.addEventListener('click', outsideClickHandler);
   });
@@ -62,6 +63,20 @@
       opened.value = false;
     }
   };
+
+  const categories = ref([]);
+  onMounted(async () => {
+    try {
+      const res = await getCategories();
+      console.log(res.data.body);
+      categories.value = res.data.body;
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      // Handle error if needed
+    }
+    document.addEventListener('click', outsideClickHandler);
+  });
+  console.log(categories);
 </script>
 <template>
   <section>
@@ -84,14 +99,14 @@
         </VueDatePicker>
       </div>
       <div>
-        <form class="max-w-lg mx-auto p-5">
+        <form class="max-w-xl mx-auto p-5">
           <div class="flex justify-center custom-shadow rounded-2xl">
             <div class="relative text-nowrap">
               <button
                 id="menu-button"
                 aria-expanded="true"
                 aria-haspopup="true"
-                class="flex-shrink-0 bg-white z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center border border-e-0 rounded-s-2xl focus:outline-none capitalize"
+                class="flex-shrink-0 bg-white z-10 inline-flex items-center justify-center py-2.5 px-4 text-sm font-medium text-center border border-e-0 rounded-s-2xl focus:outline-none capitalize w-40"
                 type="button"
                 @click="toggleDropdown"
                 :aria-expanded="opened.toString()"
@@ -113,32 +128,30 @@
                   />
                 </svg>
               </button>
+
               <div
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="menu-button"
                 tabindex="-1"
-                class="z-10 bg-white divide-y-2 divide-gray-100 rounded-2xl shadow w-44 absolute left-[-10%]"
+                class="z-10 bg-white divide-y-2 divide-gray-100 rounded-2xl shadow w-40 absolute top-12"
                 :class="{ hidden: !opened, block: opened }"
                 ref="dropdownMenu"
                 @keydown.escape="closeDropdown"
               >
-                <ul class="text-sm" role="none" v-for="(item, index) in tasks" :key="index">
-                  <li>
+                <ul class="text-sm" role="none">
+                  <li class="hover:font-semibold" v-for="(category, index) in categories" :key="index">
                     <a
                       href="#"
-                      :class="[
-                        'block',
-                        'px-4',
-                        'py-2',
-                        'hover:bg-gray-50',
-                        index === 0 ? 'rounded-t-2xl' : '',
-                        index === tasks.length - 1 ? 'rounded-b-2xl' : '',
-                        'capitalize',
-                      ]"
-                      @click="selectCategory(item.category)"
-                      >{{ item.category }}</a
+                      class="block px-4 py-2 hover:bg-gray-50 capitalize"
+                      :class="{
+                        'rounded-t-2xl': index === 0,
+                        'rounded-b-2xl': index === categories.length - 1,
+                      }"
+                      @click="selectCategory(category.name)"
                     >
+                      {{ category.name }}
+                    </a>
                   </li>
                 </ul>
               </div>
