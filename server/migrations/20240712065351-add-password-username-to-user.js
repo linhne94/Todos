@@ -2,12 +2,12 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.addColumn('Users', 'password', {
+    await queryInterface.addColumn('user', 'password', {
       type: Sequelize.STRING,
       allowNull: false, // hoặc false nếu bạn muốn bắt buộc
     });
 
-    await queryInterface.addColumn('Users', 'username', {
+    await queryInterface.addColumn('user', 'username', {
       type: Sequelize.STRING,
       unique: true,
       allowNull: true, // hoặc false nếu bạn muốn bắt buộc
@@ -16,6 +16,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.removeColumn('Users', 'age');
+    await queryInterface.removeColumn('user', 'age');
   }
 };
