@@ -2,15 +2,28 @@
   import { ref, computed, onMounted } from 'vue';
   import VueDatePicker from '@vuepic/vue-datepicker';
   import '@vuepic/vue-datepicker/dist/main.css';
-  import { defineProps } from 'vue';
+  import { defineProps, defineEmits } from 'vue';
   import { getCategories } from '../services/categories';
+  import { createTask } from '@/services/todo';
+
   const props = defineProps({
     tasks: {
       type: Array,
       required: true,
     },
   });
+
+  const emit = defineEmits(['add-task']);
+
+  // const emit = defineEmits(['addTask']);
+
   const date = ref(new Date());
+  const taskTitle = ref('');
+  const currentCategory = ref('');
+  const cateId = ref('');
+
+  const categories = ref([]);
+  const opened = ref(false);
 
   const dayOfMonthWithSuffix = computed(() => {
     const dayOfMonth = date.value.getDate();
@@ -21,6 +34,18 @@
   const month = computed(() => {
     return date.value.toLocaleDateString('en-US', { month: 'long' });
   });
+
+  const taskDataInput = computed(() => ({
+    dueDate: date.value.toISOString().split('T')[0],
+    content: taskTitle.value,
+    categoryId: cateId.value || null,
+  }));
+
+  const taskDataInputUpdate = computed(() => ({
+    dueDate: date.value.toISOString().split('T')[0],
+    content: taskTitle.value,
+    Category: { name: currentCategory.value } || null,
+  }));
 
   function getDaySuffix(day) {
     if (day >= 11 && day <= 13) {
@@ -37,7 +62,6 @@
         return 'th';
     }
   }
-  const opened = ref(false);
 
   const toggleDropdown = () => {
     opened.value = !opened.value;
@@ -46,15 +70,12 @@
   const closeDropdown = () => {
     opened.value = false;
   };
-  const currentCategory = ref('');
+
   const selectCategory = (category) => {
-    currentCategory.value = category;
+    currentCategory.value = category.name;
+    cateId.value = category.id;
     opened.value = false;
   };
-
-  onMounted(() => {
-    document.addEventListener('click', outsideClickHandler);
-  });
 
   const outsideClickHandler = (event) => {
     if (!opened.value) return;
@@ -64,20 +85,30 @@
     }
   };
 
-  const categories = ref([]);
+  const addNewTask = () => {
+    // console.log(taskDataInput.value);
+    createTask(taskDataInput.value)
+      .then((data) => {
+        console.log(data);
+        emit('add-task', taskDataInputUpdate.value);
+        taskTitle.value = '';
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   onMounted(async () => {
     try {
       const res = await getCategories();
-      console.log(res.data.body);
       categories.value = res.data.body;
     } catch (error) {
       console.error('Error fetching categories:', error);
-      // Handle error if needed
     }
     document.addEventListener('click', outsideClickHandler);
   });
-  console.log(categories);
 </script>
+
 <template>
   <section>
     <div class="container text-center">
@@ -99,7 +130,7 @@
         </VueDatePicker>
       </div>
       <div>
-        <form class="max-w-xl mx-auto p-5">
+        <form @submit.prevent="addNewTask" class="max-w-xl mx-auto p-5">
           <div class="flex justify-center custom-shadow rounded-2xl">
             <div class="relative text-nowrap">
               <button
@@ -140,7 +171,11 @@
                 @keydown.escape="closeDropdown"
               >
                 <ul class="text-sm" role="none">
-                  <li class="hover:font-semibold" v-for="(category, index) in categories" :key="index">
+                  <li
+                    class="hover:font-semibold"
+                    v-for="(category, index) in categories"
+                    :key="index"
+                  >
                     <a
                       href="#"
                       class="block px-4 py-2 hover:bg-gray-50 capitalize"
@@ -148,7 +183,7 @@
                         'rounded-t-2xl': index === 0,
                         'rounded-b-2xl': index === categories.length - 1,
                       }"
-                      @click="selectCategory(category.name)"
+                      @click="selectCategory(category)"
                     >
                       {{ category.name }}
                     </a>
@@ -160,6 +195,7 @@
               <input
                 type="text"
                 id="search-dropdown"
+                v-model="taskTitle"
                 class="block p-2.5 w-full z-20 text-sm rounded-e-2xl rounded-s-gray-100 rounded-s-2 border focus:outline-none pr-11"
                 placeholder="Add new task"
                 required

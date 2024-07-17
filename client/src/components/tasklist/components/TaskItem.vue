@@ -7,6 +7,14 @@
       required: true,
     },
   });
+
+  const toggleTaskStatus = (taskId) => {
+    console.log('taskId nè update đi: ' + taskId);
+  };
+
+  const deleteTask = (taskId) => {
+    console.log('taskId nè xóa đi: ' + taskId);
+  };
 </script>
 
 <template>
@@ -18,21 +26,23 @@
             :class="{ 'line-through text-gray-400': item.checked }"
             class="capitalize text-gray-400"
           >
-            {{ item.category }}
+            {{ item.Category?.name || item.categoryId }}
           </h3>
         </div>
         <div class="flex-1 flex items-center justify-between gap-x-[50px]">
           <h3 :class="{ 'line-through text-gray-400': item.checked }">
-            {{ item.title }}
+            {{ item.content }}
           </h3>
           <div class="flex items-center justify-center rounded-full gap-x-5">
             <input
               type="checkbox"
               v-model="item.checked"
+              @change="toggleTaskStatus(item.id)"
               class="w-5 h-5 bg-gray-100 border-gray-300 rounded-full accent-pink-500 opacity-0 group-hover:opacity-100 checked:opacity-100"
             />
             <button
               type="button"
+              @click="deleteTask(item.id)"
               class="border border-red-700 bg-red-700 text-white opacity-0 group-hover:opacity-100 rounded-sm"
               :class="{ 'opacity-100': item.checked }"
             >

@@ -1,7 +1,8 @@
-const db = require('../models/index.js');
-const { Task } = db;
+const db = require("../models/index.js");
+const { Task, Category } = db;
 
 const createTask = async (data) => {
+  // console.log(data);
   const task = await Task.create(data);
   return task;
 };
@@ -10,13 +11,18 @@ const getAllTasks = async (whereClause = {}) => {
   try {
     const tasks = await Task.findAll({
       where: whereClause,
+      include: [
+        {
+          model: Category,
+          attributes: ["name"],
+        },
+      ],
     });
     return tasks;
   } catch (error) {
     throw new Error(`Error retrieving tasks: ${error.message}`);
   }
 };
-
 
 const getTaskById = async (id) => {
   const task = await Task.findByPk(id);
@@ -38,7 +44,7 @@ const deleteTask = async (id) => {
     return null;
   }
   await task.destroy();
-  return { message: 'Task deleted successfully' };
+  return { message: "Task deleted successfully" };
 };
 
 module.exports = {

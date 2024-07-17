@@ -1,7 +1,7 @@
 import axios from './axios';
 
-const getTask = () => {
-  return axios.get('/tasks');
+const getTask = (param) => {
+  return axios.get('/tasks' + param);
 };
 
 const createTask = (data) => {

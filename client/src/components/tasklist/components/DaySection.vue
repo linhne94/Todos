@@ -9,6 +9,8 @@
     { label: 'Next Weeks', value: 'next-weeks' },
   ]);
   const selectedDay = ref(days.value[0].value);
+  emits('update:selectedDay', selectedDay.value);
+
   const handleDayClick = (day) => {
     selectedDay.value = day.value;
     emits('update:selectedDay', selectedDay.value);
