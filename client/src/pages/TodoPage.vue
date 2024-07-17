@@ -10,9 +10,10 @@
     { category: 'work', title: 'Exercise for 20 minutes', checked: false },
     { category: 'daily habits', title: 'Read a book for 1 hour', checked: false },
   ]);
+  const categories = ref(['All categories', 'daily habits', 'personal projects', 'work']);
 </script>
 
 <template>
-  <SearchBar :tasks="tasks" />
+  <SearchBar :tasks="tasks" :categories="categories" />
   <TaskList :tasks="tasks" />
 </template>

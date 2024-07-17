@@ -9,6 +9,10 @@
       type: Array,
       required: true,
     },
+    categories: {
+      type: Array,
+      required: true,
+    },
   });
   const date = ref(new Date());
 
@@ -51,6 +55,7 @@
     currentCategory.value = category;
     opened.value = false;
   };
+
   onMounted(() => {
     document.addEventListener('click', outsideClickHandler);
   });
@@ -84,14 +89,14 @@
         </VueDatePicker>
       </div>
       <div>
-        <form class="max-w-lg mx-auto p-5">
+        <form class="max-w-xl mx-auto p-5">
           <div class="flex justify-center custom-shadow rounded-2xl">
             <div class="relative text-nowrap">
               <button
                 id="menu-button"
                 aria-expanded="true"
                 aria-haspopup="true"
-                class="flex-shrink-0 bg-white z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center border border-e-0 rounded-s-2xl focus:outline-none capitalize"
+                class="flex-shrink-0 bg-white z-10 inline-flex items-center justify-center py-2.5 px-4 text-sm font-medium text-center border border-e-0 rounded-s-2xl focus:outline-none capitalize w-40"
                 type="button"
                 @click="toggleDropdown"
                 :aria-expanded="opened.toString()"
@@ -118,12 +123,17 @@
                 aria-orientation="vertical"
                 aria-labelledby="menu-button"
                 tabindex="-1"
-                class="z-10 bg-white divide-y-2 divide-gray-100 rounded-2xl shadow w-44 absolute left-[-10%]"
+                class="z-10 bg-white divide-y-2 divide-gray-100 rounded-2xl shadow w-40 absolute top-12"
                 :class="{ hidden: !opened, block: opened }"
                 ref="dropdownMenu"
                 @keydown.escape="closeDropdown"
               >
-                <ul class="text-sm" role="none" v-for="(item, index) in tasks" :key="index">
+                <ul
+                  class="text-sm"
+                  role="none"
+                  v-for="(category, index) in categories"
+                  :key="index"
+                >
                   <li>
                     <a
                       href="#"
@@ -133,11 +143,11 @@
                         'py-2',
                         'hover:bg-gray-50',
                         index === 0 ? 'rounded-t-2xl' : '',
-                        index === tasks.length - 1 ? 'rounded-b-2xl' : '',
+                        index === categories.length - 1 ? 'rounded-b-2xl' : '',
                         'capitalize',
                       ]"
-                      @click="selectCategory(item.category)"
-                      >{{ item.category }}</a
+                      @click="selectCategory(category)"
+                      >{{ category }}</a
                     >
                   </li>
                 </ul>
