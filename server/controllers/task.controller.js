@@ -24,65 +24,60 @@ const getTasks = async (req, res, next) => {
 
   try {
     let tasks;
+    let startOfDay;
+    let startOfTomorrow;
     const { timeRange } = req.query;
     
     switch (timeRange) {
       case 'today':
-        const startOfDay = moment().tz(timezone).startOf('day').format('YYYY-MM-DD HH:mm:ss');
-        const endOfDay = moment().tz(timezone).endOf('day').format('YYYY-MM-DD HH:mm:ss');
+        startOfDay = moment().tz(timezone).startOf('day').add(7, 'hour').toDate();
+        startOfTomorrow = moment().tz(timezone).startOf('day').add(1, 'day').add(7, 'hour').toDate();
+
         
         tasks = await getAllTasks({
-          where: {
-            dueDate: {
-              [Op.gte]: moment.tz(startOfDay, timezone).toDate(),
-              [Op.lte]: moment.tz(endOfDay, timezone).toDate()
-            }
+          dueDate: {
+            [Op.gte]: startOfDay,
+            [Op.lte]: startOfTomorrow
           }
         });
         break;
-
-
-
-      
-      case 'tomorrow':
-        const tomorrowStart = moment().add(1, 'day').startOf('day');
-        const tomorrowEnd = moment().add(1, 'day').endOf('day');
         
+        
+        case 'tomorrow':
+          startOfDay = moment().tz(timezone).startOf('day').add(1, 'day').add(7, 'hour').toDate();;
+          startOfTomorrow = moment().tz(timezone).startOf('day').add(2, 'day').add(7, 'hour').toDate();
+          
         tasks = await getAllTasks({
-          where: {
-            dueDate: {
-              [Op.between]: [tomorrowStart.toDate(), tomorrowEnd.toDate()]
-            }
+          dueDate: {
+            [Op.gte]: startOfDay,
+            [Op.lte]: startOfTomorrow
           }
         });
         break;
       
       case 'next_week':
-        const nextWeekStart = moment().add(1, 'week').startOf('week');
-        const nextWeekEnd = moment().add(1, 'week').endOf('week');
+         startOfDay = moment().add(1, 'week').startOf('week').add(1, 'day');
+         startOfTomorrow = moment().add(1, 'week').endOf('week').add(1, 'day');
         
         tasks = await getAllTasks({
-          where: {
-            dueDate: {
-              [Op.between]: [nextWeekStart.toDate(), nextWeekEnd.toDate()]
-            }
+          dueDate: {
+            [Op.gte]: startOfDay,
+            [Op.lte]: startOfTomorrow
           }
         });
         break;
       
       case 'this_week':
-        const thisWeekStart = moment().startOf('week');
-        const thisWeekEnd = moment().endOf('week');
+        startOfDay = moment().startOf('week').add(1, 'day');
+        startOfTomorrow = moment().endOf('week').add(1, 'day');
         
         tasks = await getAllTasks({
-          where: {
             dueDate: {
-              [Op.between]: [thisWeekStart.toDate(), thisWeekEnd.toDate()]
+              [Op.gte]: startOfDay,
+              [Op.lte]: startOfTomorrow
             }
-          }
         });
         break;
-      
       default:
         throw new Error('Invalid time range');
     }

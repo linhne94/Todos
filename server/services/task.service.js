@@ -7,11 +7,16 @@ const createTask = async (data) => {
 };
 
 const getAllTasks = async (whereClause = {}) => {
-  const tasks = await Task.findAll({
-    where: whereClause,
-  });
-  return tasks;
+  try {
+    const tasks = await Task.findAll({
+      where: whereClause,
+    });
+    return tasks;
+  } catch (error) {
+    throw new Error(`Error retrieving tasks: ${error.message}`);
+  }
 };
+
 
 const getTaskById = async (id) => {
   const task = await Task.findByPk(id);
