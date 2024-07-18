@@ -109,7 +109,6 @@ const getTasks = async (req, res, next) => {
 
     res.status(httpStatus.OK).send(responseHandler(tasks));
   } catch (error) {
-    console.error("Error retrieving tasks:", error);
     next(error);
   }
 };
