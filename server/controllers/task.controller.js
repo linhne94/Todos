@@ -23,7 +23,7 @@ const getTasks = async (req, res, next) => {
   }
 
   try {
-    let tasks;
+    let tasks = [];
     let startOfDay;
     let startOfTomorrow;
     const { timeRange } = req.query;
@@ -103,13 +103,9 @@ const getTasks = async (req, res, next) => {
       }
     }
 
-    if (!tasks || tasks.length === 0) {
-      throw new NotFoundError("No tasks found for the specified time range");
-    }
-
     res.status(httpStatus.OK).send(responseHandler(tasks));
   } catch (error) {
-    next(error);
+    next(error)
   }
 };
 
