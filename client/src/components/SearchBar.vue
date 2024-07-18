@@ -5,7 +5,9 @@
   import { defineProps, defineEmits } from 'vue';
   import { getCategories } from '../services/categories';
   import { createTask } from '@/services/todo';
+  import { useToast } from 'vue-toastification';
 
+  const toast = useToast();
   const props = defineProps({
     status: {
       type: Boolean,
@@ -87,13 +89,17 @@
   };
 
   const addNewTask = () => {
-    // console.log(taskDataInput.value);
+    if (!cateId.value) {
+      toast.error(`Please choose a category`);
+      return
+    }
     createTask(taskDataInput.value)
       .then((data) => {
         console.log(data);
         // emit('add-task', taskDataInputUpdate.value);
         emit('update-status', true);
         taskTitle.value = '';
+        toast.success(`Add new task successfully`);
       })
       .catch((err) => {
         console.log(err);
