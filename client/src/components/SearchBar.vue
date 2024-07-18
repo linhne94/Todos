@@ -7,13 +7,14 @@
   import { createTask } from '@/services/todo';
 
   const props = defineProps({
-    tasks: {
-      type: Array,
+    status: {
+      type: Boolean,
       required: true,
     },
   });
 
-  const emit = defineEmits(['add-task']);
+  // const emit = defineEmits(['add-task']);
+  const emit = defineEmits(['update-status']);
 
   // const emit = defineEmits(['addTask']);
 
@@ -90,7 +91,8 @@
     createTask(taskDataInput.value)
       .then((data) => {
         console.log(data);
-        emit('add-task', taskDataInputUpdate.value);
+        // emit('add-task', taskDataInputUpdate.value);
+        emit('update-status', true);
         taskTitle.value = '';
       })
       .catch((err) => {

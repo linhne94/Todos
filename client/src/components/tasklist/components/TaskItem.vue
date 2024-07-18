@@ -1,6 +1,6 @@
 <script setup>
   import { deleteTask, updateTask } from '@/services/todo';
-  import { defineProps, ref } from 'vue';
+  import { defineProps, ref, defineEmits } from 'vue';
 
   const props = defineProps({
     tasks: {
@@ -9,14 +9,16 @@
     },
   });
 
+  const emit = defineEmits(['update-status']);
+
   const toggleTaskStatus = (taskId, isCompleted, content) => {
-    updateTask(taskId, {isCompleted : !isCompleted})
+    updateTask(taskId, { isCompleted: !isCompleted })
       .then(() => {
-       if(isCompleted){
-        alert(`Task with name ${content}. Marked as completed`);
-       }else{
-        alert(`Task with name ${content}. Marked as uncompleted`);
-       }
+        if (isCompleted) {
+          alert(`Task with name ${content}. Marked as completed`);
+        } else {
+          alert(`Task with name ${content}. Marked as uncompleted`);
+        }
       })
       .catch((error) => {
         console.error(`Error completed task with ID ${id}:`, error);
@@ -28,6 +30,7 @@
     deleteTask(id)
       .then(() => {
         alert(`Task with name ${content} deleted successfully.`);
+        emit('update-status', true);
       })
       .catch((error) => {
         console.error(`Error deleting task with ID ${id}:`, error);
@@ -50,13 +53,13 @@
         </div>
         <div class="flex-1 flex items-center justify-between gap-x-[50px]">
           <h3 :class="{ 'line-through text-gray-400': item.isCompleted }">
-            {{ item.content }} 
+            {{ item.content }}
           </h3>
           <div class="flex items-center justify-center rounded-full gap-x-5">
             <input
               type="checkbox"
               v-model="item.isCompleted"
-              @click ="toggleTaskStatus(item.id, item.isCompleted, item.content)"
+              @click="toggleTaskStatus(item.id, item.isCompleted, item.content)"
               class="w-5 h-5 bg-gray-100 border-gray-300 rounded-full accent-pink-500 opacity-0 group-hover:opacity-100 checked:opacity-100"
             />
             <button
