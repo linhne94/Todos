@@ -1,7 +1,10 @@
 <script setup>
   import { deleteTask, updateTask } from '@/services/todo';
-  import { defineProps, ref } from 'vue';
+
+  import { defineProps, ref, defineEmits } from 'vue';
+
   import { useToast } from 'vue-toastification';
+
 
   const toast = useToast();
   const props = defineProps({
@@ -10,6 +13,8 @@
       required: true,
     },
   });
+
+  const emit = defineEmits(['update-status']);
 
   const toggleTaskStatus = (taskId, isCompleted, content) => {
     updateTask(taskId, { isCompleted: !isCompleted })
@@ -30,6 +35,7 @@
     deleteTask(id)
       .then(() => {
         toast.success(`Task ${content} is deleted`);
+        emit('update-status', true);
       })
       .catch((error) => {
         console.error(`Error deleting task with ID ${id}:`, error);
@@ -55,6 +61,7 @@
             {{ item.content }}
           </h3>
           <div class="flex items-center justify-center rounded-full gap-x-5">
+
             <div class="checkbox-wrapper">
               <input
                 v-model="item.isCompleted"
