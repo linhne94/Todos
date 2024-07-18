@@ -1,12 +1,41 @@
 <script setup>
-  import { defineProps } from 'vue';
+  import { deleteTask, updateTask } from '@/services/todo';
+  import { defineProps, ref } from 'vue';
+  import { useToast } from 'vue-toastification';
 
+  const toast = useToast();
   const props = defineProps({
     tasks: {
       type: Array,
       required: true,
     },
   });
+
+  const toggleTaskStatus = (taskId, isCompleted, content) => {
+    updateTask(taskId, { isCompleted: !isCompleted })
+      .then(() => {
+        if (isCompleted) {
+          toast.info(`Task ${content} marked as uncompleted`);
+        } else {
+          toast.success(`Task ${content} marked as completed`);
+        }
+      })
+      .catch((error) => {
+        console.error(`Error completed task with ID ${id}:`, error);
+        toast.error(`Task ${content} failed}`);
+      });
+  };
+
+  const handleDelete = (id, content) => {
+    deleteTask(id)
+      .then(() => {
+        toast.success(`Task ${content} is deleted`);
+      })
+      .catch((error) => {
+        console.error(`Error deleting task with ID ${id}:`, error);
+        toast.error(`Task ${content} failed}`);
+      });
+  };
 </script>
 
 <template>
@@ -15,24 +44,43 @@
       <div class="flex items-center gap-x-[100px] p-4 hover:bg-gray-50 group">
         <div class="w-[200px]">
           <h3
-            :class="{ 'line-through text-gray-400': item.checked }"
+            :class="{ 'line-through text-gray-400': item.isCompleted }"
             class="capitalize text-gray-400"
           >
-            {{ item.category }}
+            {{ item.Category?.name || item.categoryId }}
           </h3>
         </div>
         <div class="flex-1 flex items-center justify-between gap-x-[50px]">
-          <h3 :class="{ 'line-through text-gray-400': item.checked }">
-            {{ item.title }}
+          <h3 :class="{ 'line-through text-gray-400': item.isCompleted }">
+            {{ item.content }}
           </h3>
           <div class="flex items-center justify-center rounded-full gap-x-5">
-            <input
-              type="checkbox"
-              v-model="item.checked"
-              class="w-5 h-5 bg-gray-100 border-gray-300 rounded-full accent-pink-500 opacity-0 group-hover:opacity-100 checked:opacity-100"
-            />
+            <div class="checkbox-wrapper">
+              <input
+                v-model="item.isCompleted"
+                type="checkbox"
+                class="check"
+                :id="'check-' + item.id"
+                @click="toggleTaskStatus(item.id, item.isCompleted, item.content)"
+              />
+              <label :for="'check-' + item.id" class="label">
+                <svg width="45" height="45" viewBox="0 0 95 95">
+                  <rect x="30" y="20" width="45" height="45" stroke="black" fill="none"></rect>
+                  <g transform="translate(0,-952.36222)">
+                    <path
+                      d="m 56,963 c -102,122 6,9 7,9 17,-5 -66,69 -38,52 122,-77 -7,14 18,4 29,-11 45,-43 23,-4"
+                      stroke="black"
+                      stroke-width="3"
+                      fill="none"
+                      class="path1"
+                    ></path>
+                  </g>
+                </svg>
+              </label>
+            </div>
             <button
               type="button"
+              @click="handleDelete(item.id, item.content)"
               class="border border-red-700 bg-red-700 text-white opacity-0 group-hover:opacity-100 rounded-sm"
               :class="{ 'opacity-100': item.checked }"
             >
@@ -89,3 +137,50 @@
     </div>
   </div>
 </template>
+
+<style scoped>
+  .checkbox-wrapper input[type='checkbox'] {
+    visibility: hidden;
+    display: none;
+  }
+
+  .checkbox-wrapper *,
+  .checkbox-wrapper ::after,
+  .checkbox-wrapper ::before {
+    box-sizing: border-box;
+    user-select: none;
+  }
+
+  .checkbox-wrapper {
+    position: relative;
+    display: block;
+    overflow: hidden;
+  }
+
+  .checkbox-wrapper .label {
+    cursor: pointer;
+  }
+
+  .checkbox-wrapper .check {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    opacity: 0;
+  }
+
+  .checkbox-wrapper .label svg {
+    vertical-align: middle;
+  }
+
+  .checkbox-wrapper .path1 {
+    stroke-dasharray: 400;
+    stroke-dashoffset: 400;
+    transition: 0.5s stroke-dashoffset;
+    opacity: 0;
+  }
+
+  .checkbox-wrapper .check:checked + label svg g path {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+</style>
