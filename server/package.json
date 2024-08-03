@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@azure/storage-blob": "^12.24.0",
     "cloudinary": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -18,6 +19,7 @@
     "express-json-validator-middleware": "^3.0.1",
     "http-status": "^1.7.4",
     "moment": "^2.30.1",
+    "multer": "^1.4.5-lts.1",
     "mysql2": "^3.10.2",
     "nodemailer": "^6.9.14",
     "nodemon": "^3.1.4",

@@ -60,7 +60,7 @@
     <div class="container">
       <div class="bg-white rounded-2xl p-10 grid grid-cols-10 gap-10 custom-shadow">
         <DaySection @update:selectedDay="handleSelectedDayUpdate" class="col-span-3" />
-        <TaskItem :tasks="tasks" @update-status="updateStatus" class="col-span-7" />
+        <TaskItem  :tasks="tasks" @update-status="updateStatus" class="col-span-7 h-[40vh] overflow-y-auto" />
       </div>
     </div>
   </section>

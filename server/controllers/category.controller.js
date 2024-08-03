@@ -6,38 +6,55 @@ const { createCategory, getAllCategories, getCategoryById, updateCategory, delet
 const responseHandler = response;
 const { NotFoundError } = errors;
 
-const addCategory = async (req, res) => {
-  const categoryDetails = await createCategory(req.body);
-  res.status(httpStatus.CREATED).send(responseHandler(categoryDetails));
-};
-
-const getCategories = async (req, res) => {
-  const categories = await getAllCategories();
-  res.status(httpStatus.OK).send(responseHandler(categories));
-};
-
-const getCategory = async (req, res) => {
-  const category = await getCategoryById(req.params.categoryId);
-  if (!category) {
-    throw new NotFoundError();
+const addCategory = async (req, res, next) => {
+  try {
+    const categoryDetails = await createCategory(req.body);
+    res.status(httpStatus.CREATED).send(responseHandler(categoryDetails));
+  } catch (error) {
+    next(error)
   }
-  res.status(httpStatus.OK).send(responseHandler(category));
 };
 
-const updateCategoryDetails = async (req, res) => {
-  const category = await updateCategory(req.params.categoryId, req.body);
-  if (!category) {
-    throw new NotFoundError();
+const getCategories = async (req, res, next) => {
+  try {
+    const categories = await getAllCategories();
+    res.status(httpStatus.OK).send(responseHandler(categories));
+  } catch (error) {
+    next(error)
   }
-  res.status(httpStatus.OK).send(responseHandler(category));
 };
 
-const removeCategory = async (req, res) => {
-  const result = await deleteCategory(req.params.categoryId);
-  if (!result) {
-    throw new NotFoundError();
+const getCategory = async (req, res, next) => {
+  try {
+    const category = await getCategoryById(req.params.categoryId);
+    if (!category) {
+      throw new NotFoundError();
+    }
+    res.status(httpStatus.OK).send(responseHandler(category));
+  } catch (error) {
+    next(error)
   }
-  res.status(httpStatus.OK).send(responseHandler(result));
+};
+
+const updateCategoryDetails = async (req, res, next) => {
+  try {
+    const category = await updateCategory(req.params.categoryId, req.body);
+    if (!category) {
+      throw new NotFoundError();
+    }
+    res.status(httpStatus.OK).send(responseHandler(category));
+  } catch (error) {
+    next(error)
+  } 
+};
+
+const removeCategory = async (req, res, next) => {
+  try {
+    const result = await deleteCategory(req.params.categoryId);
+    res.status(httpStatus.OK).send(responseHandler(result));
+  } catch (error) {
+    next(error)
+  }
 };
 
 module.exports = {
